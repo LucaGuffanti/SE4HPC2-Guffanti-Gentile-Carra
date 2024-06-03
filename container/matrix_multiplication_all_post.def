@@ -2,24 +2,20 @@ Bootstrap: docker
 From: ubuntu:22.04
 
 %post
-    apt -y update
-    apt -y install mpich libmpich-dev
-    apt -y install cmake
-    cd /matrix_multiplication
-    ./build.sh 
-    cd build
-    make -j3 
-    
-%files
-    ../googletest       /matrix_multiplication/googletest
-    ../include          /matrix_multiplication/include
-    ../src              /matrix_multiplication/src
-    ../CMakeLists.txt   /matrix_multiplication/CMakeLists.txt
-    ../lib              /matrix_multiplication/lib
-	../test				/matrix_multiplication/test
-    ../build.sh         /matrix_multiplication/build.sh
-	../matrix[A-B].txt			/matrix_multiplication/.
+    apt -y update 
+    apt install -y cmake 
+    apt install -y git
+    apt install -y mpich libmpich-dev
+
+    git clone https://github.com/LucaGuffanti/SE4HPC2-Guffanti-Gentile-Carra --recurse-submodules
+    cd SE4HPC2-Guffanti-Gentile-Carra
+    mkdir -p build && cd build
+    cmake ..
+    make -j3
 
 %runscript
-    ls
-    mpirun -n 2 build/main
+    
+    cd /SE4HPC2-Guffanti-Gentile-Carra
+    mpirun -np 2 ./build/main
+
+    
