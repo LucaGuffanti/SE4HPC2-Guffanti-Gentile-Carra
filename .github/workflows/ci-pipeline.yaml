@@ -26,13 +26,10 @@ jobs:
               run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
 
             - name: Install GO
-              run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && \
-                wget -O /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GOVERSION}.${OS}-${ARCH}.tar.gz && \
-                sudo tar -C /usr/local -xzf /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz
+              run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && wget -O /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GOVERSION}.${OS}-${ARCH}.tar.gz &&  sudo tar -C /usr/local -xzf /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz
 
             - name: Setup GO Environment
-              run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && \
-                source ~/.bashrc
+              run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && source ~/.bashrc
 
             - name: Download Singularity release
               run: git clone https://github.com/hpcng/singularity.git && cd singularity
@@ -41,10 +38,7 @@ jobs:
               run: git checkout v3.8.4
 
             - name: Compile Singularity
-              run: ./mconfig && \
-                cd ./builddir && \
-                make && \
-                sudo make install
+              run: ./mconfig && cd ./builddir && make && sudo make install
             
             - name: Verify Singularity Download
               run: singularity --version
