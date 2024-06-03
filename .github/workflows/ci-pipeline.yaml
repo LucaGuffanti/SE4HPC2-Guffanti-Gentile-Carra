@@ -42,3 +42,9 @@ jobs:
 
           - name: Verify Singularity Download
             run: singularity --version
+
+          - name: Build Singularity Image
+            run: cd container && singularity build mult.sif matrix_multiplication.def
+
+          - name: Run container
+            run: singularity run mult.sif
