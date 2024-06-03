@@ -51,5 +51,5 @@ jobs:
               pwd
               ls ../../
               cd ../../container
-              sudo singularity build mm.sif matrix_multiplication.def
-              sudo singularity run --writable mm.sif
+              sudo singularity build --writable-tmpfs mm.sif matrix_multiplication.def
+              sudo singularity run --writable-tmpfs mm.sif
