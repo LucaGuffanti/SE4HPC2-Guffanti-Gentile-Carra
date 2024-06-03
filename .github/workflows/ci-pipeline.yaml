@@ -43,8 +43,11 @@ jobs:
           - name: Verify Singularity Download
             run: singularity --version
 
+          - name: Find the working directory
+            run: ls -a && pwd
+            
           - name: Build Singularity Image
-            run: pwd && cd container && singularity build mult.sif matrix_multiplication.def
+            run: singularity build mm.sif matrix_multiplication.def
 
           - name: Run container
-            run: singularity run mult.sif
+            run: singularity run --writable mm.sif
