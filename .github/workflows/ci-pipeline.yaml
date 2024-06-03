@@ -34,8 +34,10 @@ jobs:
             - name: Download Singularity release
               run: git clone https://github.com/hpcng/singularity.git && cd singularity
 
-            - name: Compile Singularity
-              run: sudo make install
+            - name: Configure singularity
+              run: chmod +x mconfig && ./mconfig 
+            - name: Build Singularity
+              run: cd ./builddir && make && sudo make install 
             
             - name: Verify Singularity Download
               run: singularity --version
