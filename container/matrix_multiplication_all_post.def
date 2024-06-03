@@ -21,4 +21,5 @@ From: ubuntu:22.04
 	../matrix[A-B].txt			/matrix_multiplication/.
 
 %runscript
+    ls
     mpirun -n 2 build/main
