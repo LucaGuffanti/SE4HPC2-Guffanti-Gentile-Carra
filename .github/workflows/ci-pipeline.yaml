@@ -31,13 +31,8 @@ jobs:
             - name: Setup GO Environment
               run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && source ~/.bashrc
 
-            - name: Download Singularity release
-              run: git clone https://github.com/hpcng/singularity.git && cd singularity
-
-            - name: Configure singularity
-              run: chmod +x mconfig && ./mconfig 
-            - name: Build Singularity
-              run: cd ./builddir && make && sudo make install 
+            - name: Setup Singularity with Github Action
+              uses: eWaterCycle/setup-singularity@v7
             
             - name: Verify Singularity Download
               run: singularity --version
