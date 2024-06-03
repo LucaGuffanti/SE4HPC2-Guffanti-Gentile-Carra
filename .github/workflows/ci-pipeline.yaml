@@ -9,20 +9,40 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v2
               with:
-                submodules: true
+                submodules: true            
             - name: Install CMAKE
               run: sudo apt update && sudo apt install -y cmake
+
             - name: Install MPI
               run: sudo apt update && sudo apt install -y mpich
+
             - name: Build Project
               run: chmod +x build.sh && ./build.sh
+
             - name: Run tests
               run: cd build && ./test_multiplication
-    # run-tests:
-    #     name: Run code tests
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout repository
-    #           uses: actions/checkout@v2
-    #         - run: echo "Executing tests"
-    #         - run: ./test_multiplication
+
+            - name: Install GO
+              run: export VERSION=1.11 OS=linux ARCH=amd64 && \
+                wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz && \
+                sudo tar -C /usr/local -xzvf go$VERSION.$OS-$ARCH.tar.gz && \
+                rm go$VERSION.$OS-$ARCH.tar.gz
+
+            - name: Setup GO Environment
+              run: echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
+                echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+                source ~/.bashrc
+
+            - name: Download Singularity release
+              run: export VERSION=3.8.3 && \
+                mkdir -p $GOPATH/src/github.com/sylabs && \
+                cd $GOPATH/src/github.com/sylabs && \
+                wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
+                tar -xzf singularity-${VERSION}.tar.gz && \
+                cd ./singularity && \
+                ./mconfig
+
+            - name: Compile Singularity
+              run: ./mconfig && \
+                make -C ./builddir && \
+                sudo make -C ./builddir install
