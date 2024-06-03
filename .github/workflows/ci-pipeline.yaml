@@ -23,13 +23,7 @@ jobs:
               run: cd build && ./test_multiplication
 
             - name: Install Singularity Dependencies
-              run: sudo apt-get update && sudo apt-get install -y \
-                build-essential \
-                libseccomp-dev \
-                pkg-config \
-                squashfs-tools \
-                cryptsetup \
-                curl wget git
+              run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
 
             - name: Install GO
               run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && \
