@@ -26,6 +26,10 @@ jobs:
         name: Install Singularity
         runs-on: ubuntu-latest
         steps:    
+          - name: Checkout repository
+            uses: actions/checkout@v2
+            with:
+              submodules: true  
           - name: Install Singularity Dependencies
             run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
 
@@ -44,7 +48,7 @@ jobs:
             run: singularity --version
 
           - name: Find the working directory
-            run: ls -a && pwd && ls .. 
+            run: ls -a && pwd && ls .. && cd container
             
           - name: Build Singularity Image
             run: singularity build mm.sif matrix_multiplication.def
