@@ -38,20 +38,20 @@ jobs:
 
           - name: Setup GO Environment
             run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && source ~/.bashrc
+          
+          - name: Clone the Repo
+            run: |
+              git clone https://github.com/hpcng/singularity.git
+              cd singularity
+              ./mconfig
+              cd ./builddir
+              make
+              sudo make install
+              export PATH=$PATH:/usr/local/bin
+              cd container
 
-          - name: Install Singularity Release
-            uses: eWaterCycle/setup-singularity@v7
-            with:
-              singularity-version: 3.8.3
-
-          - name: Verify Singularity Download
-            run: singularity --version
-
-          - name: Find the working directory
-            run: ls -a && pwd && ls .. && cd container
-            
           - name: Build Singularity Image
             run: sudo singularity build mm.sif matrix_multiplication.def
 
           - name: Run container
-            run: singularity run --writable mm.sif
+            run: sudo singularity run --writable mm.sif
