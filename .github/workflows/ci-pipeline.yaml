@@ -11,7 +11,7 @@ jobs:
               with:
                 submodules: true            
             - name: Install CMAKE
-              run: sudo apt update && sudo apt upgrade && sudo apt install -y cmake
+              run: sudo apt update && sudo apt install -y cmake
 
             - name: Install MPI
               run: sudo apt install -y mpich
@@ -23,7 +23,7 @@ jobs:
               run: cd build && ./test_multiplication
 
             - name: Install Singularity Dependencies
-              run: sudo apt install -y \
+              run: sudo apt-get update && sudo apt-get install -y \
                 build-essential \
                 libseccomp-dev \
                 pkg-config \
