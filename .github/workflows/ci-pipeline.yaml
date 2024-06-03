@@ -44,7 +44,7 @@ jobs:
             run: singularity --version
 
           - name: Find the working directory
-            run: ls -a && pwd
+            run: ls -a && pwd && ls .. 
             
           - name: Build Singularity Image
             run: singularity build mm.sif matrix_multiplication.def
