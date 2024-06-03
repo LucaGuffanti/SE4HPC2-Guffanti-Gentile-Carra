@@ -18,23 +18,30 @@ jobs:
 
             - name: Build Project
               run: chmod +x build.sh && ./build.sh
-
+        
             - name: Run tests
               run: cd build && ./test_multiplication
+              
+    install-singularity:
+        name: Install Singularity
+        runs-on: ubuntu-latest
+        steps:    
+          - name: Install Singularity Dependencies
+            run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
 
-            - name: Install Singularity Dependencies
-              run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
+          - name: Install GO
+            run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && wget -O /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GOVERSION}.${OS}-${ARCH}.tar.gz &&  sudo tar -C /usr/local -xzf /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz
 
-            - name: Install GO
-              run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && wget -O /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GOVERSION}.${OS}-${ARCH}.tar.gz &&  sudo tar -C /usr/local -xzf /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz
+          - name: Setup GO Environment
+            run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && source ~/.bashrc
 
-            - name: Setup GO Environment
-              run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && source ~/.bashrc
+          - name: Download Singularity release
+            run: git clone https://github.com/hpcng/singularity.git && cd singularity
 
-            - name: Setup Singularity with Github Action
-              uses: eWaterCycle/setup-singularity@v7
-              with:
-                singularity-version: 3.8.3
-            
-            - name: Verify Singularity Download
-              run: singularity --version
+          - name: Configure singularity
+            run: chmod +x mconfig && ./mconfig 
+          - name: Build Singularity
+            run: cd ./builddir && make && sudo make install 
+          
+          - name: Verify Singularity Download
+            run: singularity --version
