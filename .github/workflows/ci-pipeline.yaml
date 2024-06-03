@@ -16,7 +16,8 @@ jobs:
               run: sudo apt update && sudo apt install -y mpich
             - name: Build Project
               run: chmod +x build.sh && ./build.sh
-              
+            - name: Run tests
+              run: cd build && ./test_multiplication
     # run-tests:
     #     name: Run code tests
     #     runs-on: ubuntu-latest
