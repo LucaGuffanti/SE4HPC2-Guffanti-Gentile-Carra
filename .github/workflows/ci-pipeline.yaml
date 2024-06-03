@@ -49,10 +49,7 @@ jobs:
               sudo make install
               export PATH=$PATH:/usr/local/bin
               pwd
-              cd container
-
-          - name: Build Singularity Image
-            run: sudo singularity build mm.sif matrix_multiplication.def
-
-          - name: Run container
-            run: sudo singularity run --writable mm.sif
+              ls ../../
+              cd ../../container
+              sudo singularity build mm.sif matrix_multiplication.def
+              sudo singularity run mm.sif
