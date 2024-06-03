@@ -33,9 +33,6 @@ jobs:
 
             - name: Download Singularity release
               run: git clone https://github.com/hpcng/singularity.git && cd singularity
-            
-            - name: Checkout the 3.8.4 release
-              run: git checkout v3.8.4
 
             - name: Compile Singularity
               run: ./mconfig && cd ./builddir && make && sudo make install
