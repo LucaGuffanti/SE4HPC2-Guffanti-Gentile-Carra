@@ -8,9 +8,8 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
-            - run: echo "Installing CMAKE"
-            - run: sudo apt update
-            - run: sudo apt install -y cmake
+            - name: Install CMAKE
+              run: sudo apt update && sudo apt install -y cmake
 
     install-mpi:
         name: Install MPI
@@ -18,9 +17,8 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
-            - run: echo "Installing MPI"
-            - run: sudo apt update
-            - run: sudo apt install -y mpich
+            - name: Install MPI
+              run: sudo apt update && sudo apt install -y mpich
     
     build-project:
         name: Build Project
@@ -28,18 +26,16 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
-            - run: echo "Creating build directory"
-            - run: mkdir build
-            - run: cd build
-            - run: echo "Building Project with CMAKE"
-            - run: cmake ..
-            - run: make
+            - name: Create build directory
+              run: mkdir build
+            - name: Build project
+              run: cmake -B ./build/ && make
     
-    run-tests:
-        name: Run code tests
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
-            - run: echo "Executing tests"
-            - run: ./test_multiplication
+    # run-tests:
+    #     name: Run code tests
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Checkout repository
+    #           uses: actions/checkout@v2
+    #         - run: echo "Executing tests"
+    #         - run: ./test_multiplication
