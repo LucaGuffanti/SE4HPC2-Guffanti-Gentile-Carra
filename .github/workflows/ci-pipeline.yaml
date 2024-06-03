@@ -11,10 +11,10 @@ jobs:
               with:
                 submodules: true            
             - name: Install CMAKE
-              run: sudo apt update && sudo apt upgrade sudo apt install -y cmake
+              run: sudo apt update && sudo apt upgrade && sudo apt install -y cmake
 
             - name: Install MPI
-              run: sudo apt update && sudo apt install -y mpich
+              run: sudo apt install -y mpich
 
             - name: Build Project
               run: chmod +x build.sh && ./build.sh
