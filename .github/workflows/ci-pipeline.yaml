@@ -1,0 +1,45 @@
+name: Build and Test
+run-name: Execute ci/cd workflow
+on: [push]
+jobs:
+    install-cmake:
+        name: Install CMAKE
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+            - run: echo "Installing CMAKE"
+            - run: sudo apt update
+            - run: sudo apt install -y cmake
+
+    install-mpi:
+        name: Install MPI
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+            - run: echo "Installing MPI"
+            - run: sudo apt update
+            - run: sudo apt install -y mpich
+    
+    build-project:
+        name: Build Project
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+            - run: echo "Creating build directory"
+            - run: mkdir build
+            - run: cd build
+            - run: echo "Building Project with CMAKE"
+            - run: cmake ..
+            - run: make
+    
+    run-tests:
+        name: Run code tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+            - run: echo "Executing tests"
+            - run: ./test_multiplication
