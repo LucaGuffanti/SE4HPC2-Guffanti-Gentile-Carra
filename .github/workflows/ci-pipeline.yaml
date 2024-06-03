@@ -11,7 +11,7 @@ jobs:
               with:
                 submodules: true            
             - name: Install CMAKE
-              run: sudo apt update && sudo apt install -y cmake
+              run: sudo apt update && sudo apt upgrade sudo apt install -y cmake
 
             - name: Install MPI
               run: sudo apt update && sudo apt install -y mpich
@@ -22,27 +22,35 @@ jobs:
             - name: Run tests
               run: cd build && ./test_multiplication
 
+            - name: Install Singularity Dependencies
+              run: sudo apt install -y \
+                build-essential \
+                libseccomp-dev \
+                pkg-config \
+                squashfs-tools \
+                cryptsetup \
+                curl wget git
+
             - name: Install GO
-              run: export VERSION=1.11 OS=linux ARCH=amd64 && \
-                wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz && \
-                sudo tar -C /usr/local -xzvf go$VERSION.$OS-$ARCH.tar.gz && \
-                rm go$VERSION.$OS-$ARCH.tar.gz
+              run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && \
+                wget -O /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GOVERSION}.${OS}-${ARCH}.tar.gz && \
+                sudo tar -C /usr/local -xzf /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz
 
             - name: Setup GO Environment
-              run: echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
-                echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+              run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && \
                 source ~/.bashrc
 
             - name: Download Singularity release
-              run: export VERSION=3.8.3 && \
-                mkdir -p $GOPATH/src/github.com/sylabs && \
-                cd $GOPATH/src/github.com/sylabs && \
-                wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
-                tar -xzf singularity-${VERSION}.tar.gz && \
-                cd ./singularity && \
-                ./mconfig
+              run: git clone https://github.com/hpcng/singularity.git && cd singularity
+            
+            - name: Checkout the 3.8.4 release
+              run: git checkout v3.8.4
 
             - name: Compile Singularity
               run: ./mconfig && \
-                make -C ./builddir && \
-                sudo make -C ./builddir install
+                cd ./builddir && \
+                make && \
+                sudo make install
+            
+            - name: Verify Singularity Download
+              run: singularity --version
