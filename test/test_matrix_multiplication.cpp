@@ -11,5 +11,6 @@
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
+    std::cout << "Running 'em all!" << std::endl;
     return RUN_ALL_TESTS();
 }
