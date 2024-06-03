@@ -26,30 +26,71 @@ jobs:
         name: Install Singularity
         runs-on: ubuntu-latest
         steps:    
+
           - name: Checkout repository
             uses: actions/checkout@v4
             with:
               submodules: true  
+
+          # Install dependencies Singularity relies on
           - name: Install Singularity Dependencies
             run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
 
-          - name: Install GO
-            run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && wget -O /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GOVERSION}.${OS}-${ARCH}.tar.gz &&  sudo tar -C /usr/local -xzf /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz
-
-          - name: Setup GO Environment
-            run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && source ~/.bashrc
-          
-          - name: Clone the Repo
+          # Set up caching for Go
+          - name: Set Up cache for Go
+            id: cache-go
+            uses: actions/cache@v2
+            with:
+              path: /opt/go
+              key: ${{ runner.os }}-go-${{ hashFiles('go_version.txt') }}
+              restore-keys: |
+                ${{ runner.os }}-go-
+                ${{ runner.os }}
+            
+          # Set up caching for Singularity
+          - name: Set Up cache for Singularity
+            id: cache-singularity
+            uses: actions/cache@v2
+            with:
+              path: /opt/singularity
+              key: ${{ runner.os }}-go-${{ hashFiles('go_version.txt') }}
+              restore-keys: |
+                ${{ runner.os }}-singularity-
+                ${{ runner.os }}
+                  
+          # Install Go if it's not cached
+          - if: ${{ steps.cache-go.outputs.cache-hit != 'true' }}
+            name: Install Go if not cached
             run: |
+              export GO_VERSION=${cat go_version.txt} OS=linux ARCH=amd64
+              wget -O /tmp/go${GO_VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GO_VERSION}.${OS}-${ARCH}.tar.gz
+              sudo tar -C /opt -xzf /tmp/go${GO_VERSION}.${OS}-${ARCH}.tar.gz
+              sudo tar mv /opt/go /opt/go-${GO_VERSION}
+              sudo ln -s /opt/go-${GO_VERSION} /opt/go
+              echo 'export PATH=$PATH:/opt/go/bin' >> ~/.bashrc && source ~/.bashrc
+          
+          # Install Singularity if it's not cached
+          - if: ${{ steps.cache-singularity.outputs.cache-hit != 'true'}}
+            name: Install Singularity if not cached
+            run: |
+              export SINGULARITY_VERSION=$(cat singularity_version.txt)
+              export SINGULARITY_INSTALL_DIR=${/opt/singularity}
               git clone https://github.com/hpcng/singularity.git
               cd singularity
-              ./mconfig
+              ./mconfig --prefix=${SINGULARITY_INSTALL_DIR}
               cd ./builddir
               make
               sudo make install
-              export PATH=$PATH:/usr/local/bin
-              pwd
-              ls ../../
+              export PATH=$PATH:/opt/singularity
+          
+          - name: Check that everything worked
+            run: |
+              go version
+              singularity --version
+
+          - name: Build Container Image and run it
+            run: |
               cd ../../container
               sudo singularity build --writable-tmpfs mm.sif matrix_multiplication.def
               sudo singularity run --writable-tmpfs mm.sif
+ 
