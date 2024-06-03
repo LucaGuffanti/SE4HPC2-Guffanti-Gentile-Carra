@@ -95,5 +95,5 @@ jobs:
               ls /opt/singularity/bin
 
               sudo /opt/singularity/bin/singularity --version
-              sudo /opt/singularity/bin/singularity build --writable-tmpfs mm.sif matrix_multiplication.def
+              sudo /opt/singularity/bin/singularity build --writable-tmpfs mm.sif matrix_multiplication_all_post.def
               sudo /opt/singularity/bin/singularity run --writable-tmpfs mm.sif
