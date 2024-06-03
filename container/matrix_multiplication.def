@@ -1,0 +1,24 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+    apt -y update
+    apt -y install mpich libmpich-dev
+    apt -y install cmake
+    
+%files
+    ../googletest       /matrix_multiplication/googletest
+    ../include          /matrix_multiplication/include
+    ../src              /matrix_multiplication/src
+    ../CMakeLists.txt   /matrix_multiplication/CMakeLists.txt
+    ../lib              /matrix_multiplication/lib
+	../test				/matrix_multiplication/test
+    ../build.sh         /matrix_multiplication/build.sh
+	../matrix[A-B].txt			/matrix_multiplication/.
+
+%runscript
+    cd /matrix_multiplication
+    ./build.sh 
+    cd build
+    make -j3 
+    cd .. && mpirun -n 2 build/main
