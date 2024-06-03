@@ -44,7 +44,7 @@ jobs:
             run: singularity --version
 
           - name: Build Singularity Image
-            run: cd container && singularity build mult.sif matrix_multiplication.def
+            run: pwd && cd container && singularity build mult.sif matrix_multiplication.def
 
           - name: Run container
             run: singularity run mult.sif
