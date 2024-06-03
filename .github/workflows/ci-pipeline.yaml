@@ -65,7 +65,7 @@ jobs:
               export GO_VERSION=$(cat go_version.txt) OS=linux ARCH=amd64
               wget -O /tmp/go${GO_VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GO_VERSION}.${OS}-${ARCH}.tar.gz
               sudo tar -C /opt -xzf /tmp/go${GO_VERSION}.${OS}-${ARCH}.tar.gz
-              sudo tar mv /opt/go /opt/go-${GO_VERSION}
+              sudo mv /opt/go /opt/go-${GO_VERSION}
               sudo ln -s /opt/go-${GO_VERSION} /opt/go
               echo 'export PATH=$PATH:/opt/go/bin' >> ~/.bashrc && source ~/.bashrc
           
@@ -74,7 +74,7 @@ jobs:
             name: Install Singularity if not cached
             run: |
               export SINGULARITY_VERSION=$(cat singularity_version.txt)
-              export SINGULARITY_INSTALL_DIR=${/opt/singularity}
+              export SINGULARITY_INSTALL_DIR=/opt/singularity
               git clone https://github.com/hpcng/singularity.git
               cd singularity
               ./mconfig --prefix=${SINGULARITY_INSTALL_DIR}
