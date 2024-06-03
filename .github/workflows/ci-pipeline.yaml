@@ -91,5 +91,7 @@ jobs:
           - name: Build Container Image and run it
             run: |
               cd container
-              sudo singularity build --writable-tmpfs mm.sif matrix_multiplication.def
-              sudo singularity run --writable-tmpfs mm.sif
+              ls /opt/singularity
+              ls /opt/singularity/bin
+              sudo /opt/singularity/bin/singularity build --writable-tmpfs mm.sif matrix_multiplication.def
+              sudo /opt/singularity/bin/singularity run --writable-tmpfs mm.sif
