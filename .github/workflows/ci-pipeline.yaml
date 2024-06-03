@@ -8,6 +8,8 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
+              with:
+                submodules: true
             - name: Install CMAKE
               run: sudo apt update && sudo apt install -y cmake
 
@@ -17,6 +19,8 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
+              with:
+                submodules: true
             - name: Install MPI
               run: sudo apt update && sudo apt install -y mpich
     
@@ -26,10 +30,10 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
-            - name: Create build directory
-              run: mkdir build
-            - name: Build project
-              run: cmake -B ./build/ && make
+              with:
+                submodules: true
+            - name: Build
+              run: chmod +x build.sh && ./build.sh
     
     # run-tests:
     #     name: Run code tests
