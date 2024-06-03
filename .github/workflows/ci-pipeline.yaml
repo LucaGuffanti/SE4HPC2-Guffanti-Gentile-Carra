@@ -51,7 +51,7 @@ jobs:
             run: ls -a && pwd && ls .. && cd container
             
           - name: Build Singularity Image
-            run: singularity build mm.sif matrix_multiplication.def
+            run: sudo singularity build mm.sif matrix_multiplication.def
 
           - name: Run container
             run: singularity run --writable mm.sif
