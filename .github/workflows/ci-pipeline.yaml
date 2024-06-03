@@ -9,20 +9,33 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v2
               with:
-                submodules: true
+                submodules: true            
             - name: Install CMAKE
               run: sudo apt update && sudo apt install -y cmake
+
             - name: Install MPI
-              run: sudo apt update && sudo apt install -y mpich
+              run: sudo apt install -y mpich
+
             - name: Build Project
               run: chmod +x build.sh && ./build.sh
+
             - name: Run tests
               run: cd build && ./test_multiplication
-    # run-tests:
-    #     name: Run code tests
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout repository
-    #           uses: actions/checkout@v2
-    #         - run: echo "Executing tests"
-    #         - run: ./test_multiplication
+
+            - name: Install Singularity Dependencies
+              run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
+
+            - name: Install GO
+              run: export GOVERSION=1.17.3 OS=linux ARCH=amd64 && wget -O /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GOVERSION}.${OS}-${ARCH}.tar.gz &&  sudo tar -C /usr/local -xzf /tmp/go${GOVERSION}.${OS}-${ARCH}.tar.gz
+
+            - name: Setup GO Environment
+              run: echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && source ~/.bashrc
+
+            - name: Download Singularity release
+              run: git clone https://github.com/hpcng/singularity.git && cd singularity
+
+            - name: Compile Singularity
+              run: ./mconfig && cd ./builddir && make && sudo make install
+            
+            - name: Verify Singularity Download
+              run: singularity --version
