@@ -88,11 +88,6 @@ jobs:
           - name: Add Singularity to PATH
             run: echo "/opt/singularity/bin" >> $GITHUB_PATH
 
-          - name: Check that everything worked
-            run: |
-              go version
-              singularity --version
-
           - name: Build Container Image and run it
             run: |
               cd container
