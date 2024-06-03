@@ -52,4 +52,4 @@ jobs:
               ls ../../
               cd ../../container
               sudo singularity build mm.sif matrix_multiplication.def
-              sudo singularity run mm.sif
+              sudo singularity run --writable mm.sif
