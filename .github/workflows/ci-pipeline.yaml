@@ -27,7 +27,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:    
           - name: Checkout repository
-            uses: actions/checkout@v2
+            uses: actions/checkout@v4
             with:
               submodules: true  
           - name: Install Singularity Dependencies
@@ -48,6 +48,7 @@ jobs:
               make
               sudo make install
               export PATH=$PATH:/usr/local/bin
+              pwd
               cd container
 
           - name: Build Singularity Image
