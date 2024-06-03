@@ -62,7 +62,7 @@ jobs:
           - if: ${{ steps.cache-go.outputs.cache-hit != 'true' }}
             name: Install Go if not cached
             run: |
-              export GO_VERSION=${cat go_version.txt} OS=linux ARCH=amd64
+              export GO_VERSION=$(cat go_version.txt) OS=linux ARCH=amd64
               wget -O /tmp/go${GO_VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${GO_VERSION}.${OS}-${ARCH}.tar.gz
               sudo tar -C /opt -xzf /tmp/go${GO_VERSION}.${OS}-${ARCH}.tar.gz
               sudo tar mv /opt/go /opt/go-${GO_VERSION}
