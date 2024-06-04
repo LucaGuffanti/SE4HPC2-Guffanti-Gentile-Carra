@@ -121,7 +121,7 @@ jobs:
             path: container/
         
         - name: Login into singularity registry
-          run: sudo /opt/singularity/bin/singularity remote login -u ${{ secrets.SINGULARITY_USERNAME }} -p ${{ secret.SINGULARITY_ACCESS_TOKEN }}
+          run: sudo /opt/singularity/bin/singularity remote login -u ${{ secrets.SINGULARITY_USERNAME }} -p ${{ secrets.SINGULARITY_ACCESS_TOKEN }}
 
         - name: Upload image 
           run: sudo /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
