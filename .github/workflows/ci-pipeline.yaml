@@ -97,6 +97,15 @@ jobs:
               sudo /opt/singularity/bin/singularity --version
               sudo /opt/singularity/bin/singularity build mm.sif matrix_multiplication_all_post.def
               sudo /opt/singularity/bin/singularity run mm.sif
+              
+          - name: Login to Singularity Remote
+            run: |
+             SINGULARITY_USERNAME=${{ secrets.SINGULARITY_USERNAME }}
+             SINGULARITY_ACCESS_TOKEN=${{ secrets.SINGULARITY_ACCESS_TOKEN }}
+             echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" | sudo /opt/singularity/bin/singularity remote login -u $SINGULARITY_USERNAME --password-stdin
+           
+          - name: Upload image 
+            run: sudo /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
          
           - name: Upload Container as an artifact
             uses: actions/upload-artifact@v4.3.3
@@ -104,29 +113,33 @@ jobs:
               name: container-sif
               path: container/mm.sif
             
-    deploy-artifact:
-      name: Deploy image to Singularity Registry
-      runs-on: ubuntu-latest
-      needs: [build-container]
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-          with:
-            submodules: true
+    # deploy-on-galileo:
+      # name: Deploy on Galileo
+      # runs-on: ubuntu-latest
+      # needs: [build-container]
+      # steps:
+        # - name: Checkout repository
+         #  uses: actions/checkout@v4
+         #  with:
+         #    submodules: true
 
-        - name: Download sif artifact
-          uses: actions/download-artifact@v4.1.7
-          with:
-            name: container-sif
-            path: container/
+        # - name: Install SSHPass
+         #  run: |
+          #   apt-get install sshpass
+            
+        # - name: SSH into GALILEO
+         #  run: |
+         #   ssh-keygen -R "login.g100.cineca.it"
+          #  sshpass -p ${{ secrets.GALILEO_PASSWORD }} ssh -o StrictHostKeyChecking=no a08trb59@login.g100.cineca.it
+
+        # - name: Download the .def file
+         #  run: |
+    
+        # - name: Download sif artifact
+        #   uses: actions/download-artifact@v4.1.7
+        #   with:
+        #     name: container-sif
+        #     path: container/
         
-        - name: Login to Singularity Remote
-          run: |
-           SINGULARITY_USERNAME=${{ secrets.SINGULARITY_USERNAME }}
-           SINGULARITY_ACCESS_TOKEN=${{ secrets.SINGULARITY_ACCESS_TOKEN }}
-           echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" | sudo /opt/singularity/bin/singularity remote login -u $SINGULARITY_USERNAME --password-stdin
-           
-        - name: Upload image 
-          run: sudo /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
           
         
