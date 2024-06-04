@@ -1,4 +1,4 @@
-name: Build and Test
+name: Continuous Integration and Deployment Workflow
 run-name: Execute ci/cd workflow
 on: [push]
 jobs:
@@ -97,3 +97,10 @@ jobs:
               sudo /opt/singularity/bin/singularity --version
               sudo /opt/singularity/bin/singularity build mm.sif matrix_multiplication_all_post.def
               sudo /opt/singularity/bin/singularity run mm.sif
+         
+          - name: Upload Container as an artifact
+            uses: actions/upload-artifact@v4.3.3
+            with:
+              name: container-sif
+              path: mm.sif
+            
