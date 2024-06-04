@@ -14,23 +14,13 @@ jobs:
         - name: Install common dependencies
           run: |
             sudo apt update
-            sudo apt install -y sshpass
             sudo apt install -y git
             sudo apt install -y curl wget
-            sudo apt install -y build-essential
-      
-      name: Setup local build
-      runs-on: ubuntu-latest
-      steps:
-        - name: Install CMAKE
-          run: sudo apt install -y cmake
-
-        - name: Install MPI
-          run: sudo apt install -y mpich
-        
-      name: Install Singularity
-      runs-on: ubuntu-latest
-      steps:
+            sudo apt install -y build-essential cmake
+            sudo apt install -y cmake
+            sudo apt install -y sshpass
+            sudo apt install -y mpich
+            
         - name: Install Singularity
         - uses: eWaterCycle/setup-singularity@v7 
         
