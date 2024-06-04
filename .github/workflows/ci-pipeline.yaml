@@ -107,33 +107,27 @@ jobs:
               /opt/singularity/bin/singularity push -U matrix.sif library://lucaguffanti/se/matrix:latest
               cd ..
               
-    # deploy-on-galileo:
-      # name: Deploy on Galileo
-      # runs-on: ubuntu-latest
-      # needs: [build-container]
-      # steps:
-        # - name: Checkout repository
-         #  uses: actions/checkout@v4
-         #  with:
-         #    submodules: true
+    deploy-on-galileo:
+      name: Deploy on Galileo
+      runs-on: ubuntu-latest
+      needs: [build-container]
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+          with:
+            submodules: true
 
-        # - name: Install SSHPass
-         #  run: |
-          #   apt-get install sshpass
+        - name: Install SSHPass
+          run: |
+           apt-get install sshpass
             
-        # - name: SSH into GALILEO
-         #  run: |
-         #   ssh-keygen -R "login.g100.cineca.it"
-          #  sshpass -p ${{ secrets.GALILEO_PASSWORD }} ssh -o StrictHostKeyChecking=no a08trb59@login.g100.cineca.it
-
-        # - name: Download the .def file
-         #  run: |
-    
-        # - name: Download sif artifact
-        #   uses: actions/download-artifact@v4.1.7
-        #   with:
-        #     name: container-sif
-        #     path: container/
-        
+        - name: SSH into GALILEO
+          run: |
+            sshpass -p ${{ secrets.GALILEO_PASSWORD }} ssh -o StrictHostKeyChecking=no -t a08trb59@login.g100.cineca.it '
+                singularity pull library://lucaguffanti/se/matrix:latest
+                singularity run matrix_latest.sif
+                rm matrix_latest.sif
+                exit
+            '
           
         
