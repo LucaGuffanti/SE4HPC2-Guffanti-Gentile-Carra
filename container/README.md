@@ -10,7 +10,11 @@ The container is built starting from the base image `ubuntu:22.04` and moves the
 To run the container, use the following command:
 
 ```bash
-singularity run --writable mm.sif
+singularity run mm.sif
 ```
 
-The container will build the project and run the application.
+To execute the tests, run the following command:
+
+```bash
+singularity test mm.sif
+```
