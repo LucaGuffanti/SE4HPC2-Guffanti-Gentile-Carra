@@ -32,9 +32,6 @@ jobs:
         - name: Build Project
           run: chmod +x build.sh && ./build.sh
     
-        - name: Run tests
-          run: cd build && ./test_multiplication
-    
     test-project-local:
       name: Test Project
       runs-on: ubuntu-latest
