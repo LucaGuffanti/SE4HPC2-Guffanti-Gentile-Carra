@@ -46,8 +46,7 @@ jobs:
 
         - name: Run all tests
           run: | 
-            ls
-            ./build/test_multiplication 
+            cd build && ls -la && ./test_multiplication 
 
     build-container:
         name: Build Container
