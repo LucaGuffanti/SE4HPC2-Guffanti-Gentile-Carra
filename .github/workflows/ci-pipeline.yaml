@@ -100,7 +100,8 @@ jobs:
               
           - name: Login to Singularity Remote
             run: |
-              /opt/singularity/bin/singularity remote login -p${{ secrets.SINGULARITY_ACCESS_TOKEN}}
+              echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" > singularity_token.txt
+              /opt/singularity/bin/singularity remote login --tokenfile singularity_token.txt
          
     # deploy-on-galileo:
       # name: Deploy on Galileo
