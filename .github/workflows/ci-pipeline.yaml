@@ -100,8 +100,8 @@ jobs:
               
           - name: Login to Singularity Remote
             run: |
-             sudo /opt/singularity/bin/singularity remote login --password-stdin <<< ${{ secrets.SINGULARITY_ACCESS_TOKEN }}
-             sudo /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
+             /opt/singularity/bin/singularity remote login --password-stdin <<< ${{ secrets.SINGULARITY_ACCESS_TOKEN }}
+             /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
          
     # deploy-on-galileo:
       # name: Deploy on Galileo
