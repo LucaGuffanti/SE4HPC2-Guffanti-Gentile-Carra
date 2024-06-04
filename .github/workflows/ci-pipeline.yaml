@@ -2,120 +2,99 @@ name: Continuous Integration and Deployment Workflow
 run-name: Execute ci/cd workflow
 on: [push]
 jobs:
-    build-project:
-        name: Build Project
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
-              with:
-                submodules: true            
-            - name: Install CMAKE
-              run: sudo apt update && sudo apt install -y cmake
-
-            - name: Install MPI
-              run: sudo apt install -y mpich
-
-            - name: Build Project
-              run: chmod +x build.sh && ./build.sh
+    setup:
+      name: Setup common environment
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+          with:
+            submodules: true 
         
-            - name: Run tests
-              run: cd build && ./test_multiplication
-              
+        - name: Install common dependencies
+          run: |
+            sudo apt update
+            sudo apt install -y sshpass
+            sudo apt install -y git
+            sudo apt install -y curl wget
+            sudo apt install -y build-essential
+      
+      name: Setup local build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Install CMAKE
+          run: sudo apt install -y cmake
+
+        - name: Install MPI
+          run: sudo apt install -y mpich
+        
+      name: Install Singularity
+      runs-on: ubuntu-latest
+      steps:
+        - name: Install Singularity
+        - uses: eWaterCycle/setup-singularity@v7 
+        
+    build-project-local:
+      name: Build Project
+      runs-on: ubuntu-latest
+      needs: [setup]
+      steps:        
+        - name: Build Project
+          run: chmod +x build.sh && ./build.sh
+    
+        - name: Run tests
+          run: cd build && ./test_multiplication
+    
+    test-project-local:
+      name: Test Project
+      runs-on: ubuntu-latest
+      needs: [build-project-local]
+      steps:
+        - name: Run all tests
+          run: cd build && ./test_multiplication # to check if the path is correct
+
     build-container:
-        name: Install Singularity
+        name: Build Container
         runs-on: ubuntu-latest
-        steps:    
-
-          - name: Checkout repository
-            uses: actions/checkout@v2
-            with:
-              submodules: true  
-
-          # Install dependencies Singularity relies on
-          - name: Install Singularity Dependencies
-            run: sudo apt-get update && sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup curl wget git
-
-          # Set up caching for Go
-          - name: Set Up cache for Go
-            id: cache-go
-            uses: actions/cache@v2
-            with:
-              path: /opt/go
-              key: ${{ runner.os }}-go-${{ hashFiles('go_version.txt') }}
-              restore-keys: |
-                ${{ runner.os }}-go-
-                ${{ runner.os }}
-            
-          # Set up caching for Singularity
-          - name: Set Up cache for Singularity
-            id: cache-singularity
-            uses: actions/cache@v2
-            with:
-              path: /opt/singularity
-              key: ${{ runner.os }}-singularity-${{ hashFiles('singularity_version.txt') }}
-              restore-keys: |
-                ${{ runner.os }}-singularity-
-                ${{ runner.os }}
-                  
-          # Install Go if it's not cached
-          - if: ${{ steps.cache-go.outputs.cache-hit != 'true' }}
-            name: Install Go if not cached
-            run: |
-              GO_VERSION=$(cat go_version.txt)
-              wget -O /tmp/go${GO_VERSION}.linux-amd64.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
-              sudo tar -C /opt -xzf /tmp/go${GO_VERSION}.linux-amd64.tar.gz
-              sudo mv /opt/go /opt/go-${GO_VERSION}
-              sudo ln -s /opt/go-${GO_VERSION} /opt/go
-          
-          - name: Add Go to PATH
-            run: echo "/opt/go/bin" >> $GITHUB_PATH
-          
-          # Install Singularity if it's not cached
-          - if: ${{ steps.cache-singularity.outputs.cache-hit != 'true'}}
-            name: Install Singularity if not cached
-            run: |
-              SINGULARITY_VERSION=$(cat singularity_version.txt)
-              SINGULARITY_INSTALL_DIR=/opt/singularity
-              git clone https://github.com/hpcng/singularity.git
-              cd singularity
-              git checkout v${SINGULARITY_VERSION}
-              ./mconfig --prefix=${SINGULARITY_INSTALL_DIR}
-              cd builddir
-              make
-              sudo make install
-
-          - name: Add Singularity to PATH
-            run: echo "/opt/singularity/bin" >> $GITHUB_PATH
-
-          - name: Build Container Image and run it
+        needs: [setup]
+        steps:
+          - name: Build Container Image
             run: |
              cd container
              ls /opt/singularity
              ls /opt/singularity/bin
              sudo /opt/singularity/bin/singularity --version
-             sudo /opt/singularity/bin/singularity build matrix.sif matrix_multiplication.def
-             sudo /opt/singularity/bin/singularity run matrix.sif
-              
-          - name: Login to Singularity Remote
-            run: |
-              ls
-              cd container
-              ls
-              echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" > singularity_token.txt
-              /opt/singularity/bin/singularity remote login --tokenfile singularity_token.txt
-              /opt/singularity/bin/singularity push -U matrix.sif library://lucaguffanti/se/matrix:latest
-              cd ..
+             sudo /opt/singularity/bin/singularity build --no-test matrix.sif matrix_multiplication.def
+    
+    test-container:
+      name: Test Container
+      runs-on: ubuntu-latest
+      needs: [build-container]
+      steps:
+        - name: Run all tests
+          run: |
+            sudo /opt/singularity/bin/singularity test matrix.sif
+      
+    upload-artifact:
+      name: Upload Artifact
+      runs-on: ubuntu-latest
+      needs: [test-container, test-project-local] # TODO: check if test-project-local is needed
+      steps:
+        - name: Login to Singularity Remote
+          run: |
+            ls
+            cd container
+            ls
+            echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" > singularity_token.txt
+            /opt/singularity/bin/singularity remote login --tokenfile singularity_token.txt
+            /opt/singularity/bin/singularity push -U matrix.sif library://lucaguffanti/se/matrix:latest
+            cd ..
               
     deploy-on-galileo:
       name: Deploy on Galileo
       runs-on: ubuntu-latest
-      needs: [build-container]
+      needs: [upload-artifact]
       steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
-          with:
-            submodules: true
             
         - name: SSH into GALILEO
           run: |
@@ -125,5 +104,3 @@ jobs:
                 rm matrix_latest.sif
                 exit
             '
-          
-        
