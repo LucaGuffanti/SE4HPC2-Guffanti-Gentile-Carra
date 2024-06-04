@@ -116,10 +116,6 @@ jobs:
           uses: actions/checkout@v4
           with:
             submodules: true
-
-        - name: Install SSHPass
-          run: |
-           apt-get install sshpass
             
         - name: SSH into GALILEO
           run: |
