@@ -100,7 +100,7 @@ jobs:
               
           - name: Login to Singularity Remote
             run: |
-              echo ${{ secrets.SINGULARITY_ACCESS_TOKEN }} | /opt/singularity/bin/singularity remote login -u ${{ secrets.SINGULARITY_USERNAME }} --password-stdin 
+              echo ${{ secrets.SINGULARITY_ACCESS_TOKEN }} | /opt/singularity/bin/singularity remote login --password-stdin 
          
     # deploy-on-galileo:
       # name: Deploy on Galileo
