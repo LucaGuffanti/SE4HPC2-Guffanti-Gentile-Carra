@@ -2,64 +2,93 @@ name: Continuous Integration and Deployment Workflow
 run-name: Execute ci/cd workflow
 on: [push]
 jobs:
-    setup:
-      name: Setup common environment
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v2
-          with:
-            submodules: true 
-        
-        - name: Install common dependencies
-          run: |
-            sudo apt update
-            sudo apt install -y git
-            sudo apt install -y curl wget
-            sudo apt install -y build-essential cmake
-            sudo apt install -y cmake
-            sudo apt install -y sshpass
-            sudo apt install -y mpich
-
-        - name: Install Singularity
-          uses: eWaterCycle/setup-apptainer@v2
-          with:
-            apptainer-version: 1.3.2
+    # setup:
+    #   name: Setup common environment
+    #   runs-on: ubuntu-latest
+    #   steps:
+    #     - name: Install common dependencies
+    #       run: |
+    #         sudo apt update
+    #         sudo apt install -y git
+    #         sudo apt install -y curl wget
+    #         sudo apt install -y build-essential cmake
+    #         sudo apt install -y cmake
+    #         sudo apt install -y sshpass
+    #         sudo apt install -y mpich
     
     build-project-local:
       name: Build Project
       runs-on: ubuntu-latest
-      needs: [setup]
-      steps:        
+      steps: 
+        - name: Checkout repository
+          uses: actions/checkout@v2
+          with:
+            submodules: true 
         - name: Build Project
           run: chmod +x build.sh && ./build.sh
+
+        - name : Upload Project artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: project-executable
+            path: build/test_multiplication
     
     test-project-local:
       name: Test Project
       runs-on: ubuntu-latest
       needs: [build-project-local]
       steps:
+        - name : Download Project artifact
+          uses: actions/download-artifact@v2
+          with:
+            name: project-executable
+            path: test_multiplication
+            
         - name: Run all tests
-          run: cd build && ./test_multiplication # to check if the path is correct
+          run: ./test_multiplication # to check if the path is correct
 
     build-container:
         name: Build Container
         runs-on: ubuntu-latest
-        needs: [setup]
         steps:
+          - name: Checkout repository
+            uses: actions/checkout@v2
+            with:
+              submodules: true 
+
+          - name: Install Singularity
+            uses: eWaterCycle/setup-apptainer@v2
+            with:
+              apptainer-version: 1.3.2
+
           - name: Build Container Image
-            run: |
-             cd container
-             ls /opt/singularity
-             ls /opt/singularity/bin
-             sudo /opt/singularity/bin/singularity --version
-             sudo /opt/singularity/bin/singularity build --no-test matrix.sif matrix_multiplication.def
+            run: | 
+              cd container
+              sudo singularity --version
+              sudo singularity build --no-test matrix.sif matrix_multiplication.def
+
+          - name : Upload Container artifact
+            uses: actions/upload-artifact@v2
+            with:
+              name: container-image
+              path: container/matrix.sif
     
     test-container:
       name: Test Container
       runs-on: ubuntu-latest
       needs: [build-container]
       steps:
+        - name: Install Singularity
+          uses: eWaterCycle/setup-apptainer@v2
+          with:
+            apptainer-version: 1.3.2
+
+        - name: Download Container artifact
+          uses: actions/download-artifact@v2
+          with:
+            name: container-image
+            path: container
+
         - name: Run all tests
           run: |
             sudo /opt/singularity/bin/singularity test matrix.sif
