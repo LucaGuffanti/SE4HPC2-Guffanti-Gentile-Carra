@@ -45,7 +45,9 @@ jobs:
             path: build
 
         - name: Run all tests
-          run: ./build/test_multiplication # to check if the path is correct
+          run: | 
+            ls
+            ./build/test_multiplication 
 
     build-container:
         name: Build Container
