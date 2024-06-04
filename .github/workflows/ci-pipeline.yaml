@@ -1,4 +1,4 @@
-name: Continuous Integration and Deployment Workflow
+name: Continuous Integration
 run-name: Execute ci/cd workflow
 on: [push]
 jobs:
@@ -102,5 +102,5 @@ jobs:
             uses: actions/upload-artifact@v4.3.3
             with:
               name: container-sif
-              path: mm.sif
+              path: container/mm.sif
             
