@@ -124,8 +124,8 @@ jobs:
           run: |
            SINGULARITY_USERNAME=${{ secrets.SINGULARITY_USERNAME }}
            SINGULARITY_ACCESS_TOKEN=${{ secrets.SINGULARITY_ACCESS_TOKEN }}
-           echo $SINGULARITY_ACCESS_TOKEN | sudo /opt/singularity/bin/singularity remote login --password-stdin -u $SINGULARITY_USERNAME
-
+           echo "${{secrets.USERPWD}}\n${{SINGULARITY_ACCESS_TOKEN}}" | sudo -S /opt/singularity/bin/singularity remote login --password-stdin -u $SINGULARITY_USERNAME
+           
         - name: Upload image 
           run: sudo /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
           
