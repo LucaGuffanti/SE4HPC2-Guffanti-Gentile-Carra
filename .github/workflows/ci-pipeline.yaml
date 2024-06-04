@@ -96,6 +96,7 @@ jobs:
 
         - name: Run all tests
           run: |
+            chmod +x matrix.sif
             sudo singularity test matrix.sif
       
     upload-artifact:
