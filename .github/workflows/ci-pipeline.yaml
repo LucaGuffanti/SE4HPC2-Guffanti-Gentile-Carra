@@ -101,7 +101,10 @@ jobs:
             run: |
               echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" > singularity_token.txt
               /opt/singularity/bin/singularity remote login --tokenfile singularity_token.txt
-              /opt/singularity/bin/singularity push -U container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
+              cd container
+              /opt/singularity/bin/singularity push -U mm.sif library://lucaguffanti/SE4HPC/mm:latest
+              cd ..
+              
     # deploy-on-galileo:
       # name: Deploy on Galileo
       # runs-on: ubuntu-latest
