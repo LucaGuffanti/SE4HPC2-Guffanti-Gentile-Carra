@@ -37,7 +37,7 @@ jobs:
           uses: actions/upload-artifact@v2
           with:
             name: project-executable
-            path: build/test_multiplication
+            path: ./build/test_multiplication
     
     test-project-local:
       name: Test Project
@@ -103,7 +103,7 @@ jobs:
 
         - name: Run all tests
           run: |
-            sudo /opt/singularity/bin/singularity test matrix.sif
+            sudo singularity test matrix.sif
       
     upload-artifact:
       name: Upload Artifact
