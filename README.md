@@ -1,6 +1,13 @@
 # SE4HPCproject
+The second section of the Software Engineering for HPC hands-on projects consists in the definition of a
+continuous integration/deployment workflow to automate the build, test, and containerization steps.
+Additionally, the introduction of the MPI-based matrix multiplication required the definition of a job script
+to be run on the GALILEO Supercomputer as well as an extension to the previously defined action to target automatic 
+execution on the cluster in the case of push to the repository.
+
 
 ## Step 2 -- From build to release and manual job execution 
+
 
 Focus now on the correct implementation of the matrix multiplication you
 find in <https://github.com/SimoneReale/SE4HPC_project_part2>. This is a
