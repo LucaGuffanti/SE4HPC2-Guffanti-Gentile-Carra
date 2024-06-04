@@ -119,7 +119,7 @@ jobs:
             
         - name: SSH into GALILEO
           run: |
-            sshpass -p ${{ secrets.GALILEO_PASSWORD }} ssh -o StrictHostKeyChecking=no -t a08trb59@login.g100.cineca.it '
+            sshpass -p ${{ secrets.GALILEO_TOKEN }} ssh -o StrictHostKeyChecking=no -t a08trb59@login.g100.cineca.it '
                 singularity pull library://lucaguffanti/se/matrix:latest
                 singularity run matrix_latest.sif
                 rm matrix_latest.sif
