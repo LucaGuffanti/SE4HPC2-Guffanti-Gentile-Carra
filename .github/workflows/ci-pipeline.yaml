@@ -100,7 +100,7 @@ jobs:
               
           - name: Login to Singularity Remote
             run: |
-             sudo /opt/singularity/bin/singularity remote login -u ${{ secrets.SINGULARITY_USERNAME }} -p ${{ secrets.SINGULARITY_ACCESS_TOKEN }}
+             echo ${{ secrets.SINGULARITY_ACCESS_TOKEN }} | singularity remote login -u ${{ secrets.SINGULARITY_USERNAME }} --password-stdin
              sudo /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
          
     # deploy-on-galileo:
