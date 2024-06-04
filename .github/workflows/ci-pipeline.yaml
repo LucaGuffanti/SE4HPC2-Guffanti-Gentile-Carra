@@ -96,13 +96,12 @@ jobs:
              sudo /opt/singularity/bin/singularity --version
              sudo /opt/singularity/bin/singularity build mm.sif matrix_multiplication.def
              sudo /opt/singularity/bin/singularity run mm.sif
-             sudo /opt/singularity/bin/singularity sign mm.sif
               
           - name: Login to Singularity Remote
             run: |
               echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" > singularity_token.txt
               /opt/singularity/bin/singularity remote login --tokenfile singularity_token.txt
-              /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
+              /opt/singularity/bin/singularity push -U container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
     # deploy-on-galileo:
       # name: Deploy on Galileo
       # runs-on: ubuntu-latest
