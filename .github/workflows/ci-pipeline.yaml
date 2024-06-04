@@ -88,21 +88,21 @@ jobs:
           - name: Add Singularity to PATH
             run: echo "/opt/singularity/bin" >> $GITHUB_PATH
 
-          # - name: Build Container Image and run it
-          #   run: |
-          #     cd container
-          #     ls /opt/singularity
-          #     ls /opt/singularity/bin
+          - name: Build Container Image and run it
+            run: |
+             cd container
+             ls /opt/singularity
+             ls /opt/singularity/bin
          
-          #     sudo /opt/singularity/bin/singularity --version
-          #     sudo /opt/singularity/bin/singularity build mm.sif matrix_multiplication.def
-          #     sudo /opt/singularity/bin/singularity run mm.sif
+             sudo /opt/singularity/bin/singularity --version
+             sudo /opt/singularity/bin/singularity build mm.sif matrix_multiplication.def
+             sudo /opt/singularity/bin/singularity run mm.sif
               
           - name: Login to Singularity Remote
             run: |
               echo "${{ secrets.SINGULARITY_ACCESS_TOKEN }}" > singularity_token.txt
               /opt/singularity/bin/singularity remote login --tokenfile singularity_token.txt
-         
+              /opt/singularity/bin/singularity push container/mm.sif library://lucaguffanti/SE4HPC/mm:latest
     # deploy-on-galileo:
       # name: Deploy on Galileo
       # runs-on: ubuntu-latest
