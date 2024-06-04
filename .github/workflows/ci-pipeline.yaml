@@ -2,20 +2,6 @@ name: Continuous Integration and Deployment Workflow
 run-name: Execute ci/cd workflow
 on: [push]
 jobs:
-    # setup:
-    #   name: Setup common environment
-    #   runs-on: ubuntu-latest
-    #   steps:
-    #     - name: Install common dependencies
-    #       run: |
-    #         sudo apt update
-    #         sudo apt install -y git
-    #         sudo apt install -y curl wget
-    #         sudo apt install -y build-essential cmake
-    #         sudo apt install -y cmake
-    #         sudo apt install -y sshpass
-    #         sudo apt install -y mpich
-    
     build-project-local:
       name: Build Project
       runs-on: ubuntu-latest
@@ -36,8 +22,10 @@ jobs:
         - name : Upload Project artifact
           uses: actions/upload-artifact@v2
           with:
-            name: project-executable
-            path: ./build/test_multiplication
+            name: project-build-directory
+            path: build
+            if-no-files-found: error
+            retention-days: 1
     
     test-project-local:
       name: Test Project
@@ -53,11 +41,11 @@ jobs:
         - name : Download Project artifact
           uses: actions/download-artifact@v2
           with:
-            name: project-executable
-            path: test_multiplication
+            name: project-build-directory
+            path: build
 
         - name: Run all tests
-          run: ./test_multiplication # to check if the path is correct
+          run: ./build/test_multiplication # to check if the path is correct
 
     build-container:
         name: Build Container
@@ -84,6 +72,9 @@ jobs:
             with:
               name: container-image
               path: container/matrix.sif
+              if-no-files-found: error
+              retention-days: 1
+              compression-level: 0
     
     test-container:
       name: Test Container
@@ -99,7 +90,7 @@ jobs:
           uses: actions/download-artifact@v2
           with:
             name: container-image
-            path: container
+            path: matrix.sif
 
         - name: Run all tests
           run: |
