@@ -44,9 +44,6 @@ jobs:
           with:
             name: project-test-artifact
 
-        - name: Display structure of downloaded files
-          run: ls -R
-        
         - name: Run all tests
           run: | 
             chmod +x test_multiplication
@@ -94,9 +91,6 @@ jobs:
           uses: actions/download-artifact@v4
           with:
             name: container-image-artifact
-        
-        - name: Display structure of downloaded files
-          run: ls -R
 
         - name: Run all tests
           run: |
@@ -109,7 +103,7 @@ jobs:
       needs: [test-container, test-project-local] # TODO: check if test-project-local is needed
       steps:
         - name: Download Container artifact
-          uses: actions/download-artifact@v2
+          uses: actions/download-artifact@v4
           with:
             name: container-image-artifact
             
