@@ -24,7 +24,7 @@ jobs:
           uses: actions/upload-artifact@v2
           with:
             name: project-test-artifact
-            path: ${{ github.workspace }}/build/test_multiplication
+            path: build/test_multiplication
             if-no-files-found: error
             retention-days: 1
     
@@ -48,7 +48,7 @@ jobs:
         - name: Run all tests
           run: | 
             chmod +x test_multiplication
-            ls -la
+            ls -la test_multiplication
             ./test_multiplication 
 
     build-container:
@@ -74,7 +74,7 @@ jobs:
             uses: actions/upload-artifact@v2
             with:
               name: container-image-artifact
-              path: ${{ github.workspace }}/container/matrix.sif
+              path: container/matrix.sif
               if-no-files-found: error
               retention-days: 1
     
