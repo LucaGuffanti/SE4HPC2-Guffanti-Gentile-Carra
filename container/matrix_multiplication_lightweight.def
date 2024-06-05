@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: debian:slim
+
+%post
+    apt -y update 
+    apt install -y cmake 
+    apt install -y git
+    apt install -y mpich libmpich-dev build-essential
+
+    git clone https://github.com/LucaGuffanti/SE4HPC2-Guffanti-Gentile-Carra --recurse-submodules
+    cd SE4HPC2-Guffanti-Gentile-Carra
+    mkdir -p build && cd build
+    cmake ..
+    make -j3
+
+%runscript
+    
+    cd /SE4HPC2-Guffanti-Gentile-Carra
+    mpirun -n 2 ./build/main
+
+%test
+    cd /SE4HPC2-Guffanti-Gentile-Carra
+    ./build/test_multiplication
