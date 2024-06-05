@@ -1,5 +1,5 @@
-name: Continuous Integration and Deployment Workflow
-run-name: Execute ci/cd workflow
+name: Continuous Integration and Deployment Workflow A
+run-name: Execute ci/cd workflow A
 on: [push]
 jobs:
     build-project:
