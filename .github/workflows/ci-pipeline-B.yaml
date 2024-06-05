@@ -120,7 +120,7 @@ jobs:
             username: a08trb59
             password: ${{ secrets.GALILEO_TOKEN }}
             source: "matrix.sif,job.sh"
-            target: "~/"
+            target: "~/worflow-B/"
               
     deploy-on-galileo:
       name: Deploy on Galileo
@@ -128,6 +128,7 @@ jobs:
       needs: [upload-artifact]
       steps:
         - name: Schedule job.sh for deployment of the application
+          run: cd worflow-B
           uses: appleboy/ssh-action@v1.0.3
           with:
             host: login.g100.cineca.it
