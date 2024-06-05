@@ -46,8 +46,9 @@ jobs:
 
         - name: Run all tests
           run: | 
-            chmod +x build/test_multiplication
-            ./build/test_multiplication 
+            cd build
+            chmod +x test_multiplication
+            ./test_multiplication 
 
     build-container:
         name: Build Container
@@ -96,6 +97,7 @@ jobs:
 
         - name: Run all tests
           run: |
+            cd container
             chmod +x matrix.sif
             sudo singularity test matrix.sif
       
