@@ -1,11 +1,11 @@
 Bootstrap: docker
-From: debian:slim
+From: alpine
 
 %post
-    apt -y update 
-    apt install -y cmake 
-    apt install -y git
-    apt install -y mpich libmpich-dev build-essential
+    apk update
+    apk add g++ make cmake
+    apk add git
+    apk add openmpi openmpi-dev
 
     git clone https://github.com/LucaGuffanti/SE4HPC2-Guffanti-Gentile-Carra --recurse-submodules
     cd SE4HPC2-Guffanti-Gentile-Carra
@@ -14,7 +14,7 @@ From: debian:slim
     make -j3
 
 %runscript
-    
+
     cd /SE4HPC2-Guffanti-Gentile-Carra
     mpirun -n 2 ./build/main
 
