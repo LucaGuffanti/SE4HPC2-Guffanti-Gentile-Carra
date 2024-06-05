@@ -127,8 +127,6 @@ jobs:
       runs-on: ubuntu-latest
       needs: [upload-artifact]
       steps:
-        - name: Change directory
-
         - name: Schedule job.sh for deployment of the application
           uses: appleboy/ssh-action@v1.0.3
           with:
