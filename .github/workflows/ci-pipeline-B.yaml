@@ -1,0 +1,136 @@
+name: Continuous Integration and Deployment Workflow
+run-name: Execute ci/cd workflow
+on: [push]
+jobs:
+    build-project-local:
+      name: Build Project
+      runs-on: ubuntu-latest
+      steps: 
+
+        - name : Install dependencies
+          run: |
+            sudo apt update
+            sudo apt install -y mpich
+
+        - name: Checkout repository
+          uses: actions/checkout@v4
+          with:
+            submodules: true 
+            
+        - name: Build Project
+          run: chmod +x build.sh && ./build.sh
+
+        - name : Upload Project artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: project-test-artifact
+            path: build/test_multiplication # since test_multiplication is self-contained the artifact of this job is only the executable
+            if-no-files-found: error
+            retention-days: 1
+    
+    test-project-local:
+      name: Test Project
+      runs-on: ubuntu-latest
+      needs: [build-project-local]
+      steps:
+
+        - name : Install dependencies
+          run: |
+            sudo apt update
+            sudo apt install -y mpich
+
+        - name : Download Project artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: project-test-artifact
+
+        - name: Run all tests
+          run: | 
+            chmod +x test_multiplication
+            ls -la test_multiplication
+            ./test_multiplication 
+
+    build-container:
+        name: Build Container
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+            with:
+              submodules: true 
+
+          - name: Install Singularity
+            uses: eWaterCycle/setup-apptainer@v2
+            with:
+              apptainer-version: 1.3.2
+
+          - name: Build Container Image
+            working-directory: container
+            run: | 
+              sudo singularity build --notest matrix.sif matrix_multiplication.def
+            
+          - name : Upload Container artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: container-image-artifact
+              path: container/matrix.sif
+              if-no-files-found: error
+              retention-days: 1
+    
+    test-container:
+      name: Test Container
+      runs-on: ubuntu-latest
+      needs: [build-container]
+      steps:
+        - name: Install Singularity
+          uses: eWaterCycle/setup-apptainer@v2
+          with:
+            apptainer-version: 1.3.2
+
+        - name: Download Container artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: container-image-artifact
+
+        - name: Run all tests
+          run: |
+            ls -la 
+            sudo singularity test matrix.sif
+      
+    upload-artifact:
+      name: Upload Artifact
+      runs-on: ubuntu-latest
+      needs: [test-container, test-project-local] # TODO: check if test-project-local is needed
+      steps:
+
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+              submodules: false
+        
+        - name: Download Container artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: container-image-artifact
+    
+        - name: Copy job.sh and container image to Remote Server
+          uses: appleboy/scp-action@v0.1.7
+          with:
+            host: login.g100.cineca.it
+            username: a08trb59
+            password: ${{ secrets.GALILEO_TOKEN }}
+            source: "matrix.sif,job.sh"
+            target: "~/"
+              
+    deploy-on-galileo:
+      name: Deploy on Galileo
+      runs-on: ubuntu-latest
+      needs: [upload-artifact]
+      steps:
+        - name: Schedule job.sh for deployment of the application
+          uses: appleboy/ssh-action@v1.0.3
+          with:
+            host: login.g100.cineca.it
+            username: a08trb59
+            password: ${{ secrets.GALILEO_TOKEN }}
+            script: sbatch job.sh
