@@ -123,10 +123,11 @@ jobs:
                 rm job.sh
                 rm matrix_latest.sif
                 singularity pull library://lucaguffanti/se/matrix:latest
+                mv matrix_latest.sif matrix.sif
                 wget https://raw.githubusercontent.com/LucaGuffanti/SE4HPC2-Guffanti-Gentile-Carra/main/job.sh 
                 sbatch job.sh
                 rm job.sh
-                rm matrix_latest.sif
+                rm matrix.sif
                 exit
             '
           
