@@ -24,7 +24,7 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: project-test-artifact
-            path: build/test_multiplication
+            path: build/test_multiplication # since test_multiplication is self-contained the artifact of this job is only the executable
             if-no-files-found: error
             retention-days: 1
     
@@ -102,6 +102,11 @@ jobs:
       runs-on: ubuntu-latest
       needs: [test-container, test-project-local] # TODO: check if test-project-local is needed
       steps:
+        - name: Install Singularity
+          uses: eWaterCycle/setup-apptainer@v2
+          with:
+            apptainer-version: 1.3.2
+          
         - name: Download Container artifact
           uses: actions/download-artifact@v4
           with:
