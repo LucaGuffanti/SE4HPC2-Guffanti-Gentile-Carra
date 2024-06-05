@@ -48,6 +48,7 @@ jobs:
         - name: Run all tests
           run: | 
             chmod +x test_multiplication
+            ls -la
             ./test_multiplication 
 
     build-container:
