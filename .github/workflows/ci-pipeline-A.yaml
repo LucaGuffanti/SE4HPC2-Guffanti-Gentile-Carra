@@ -120,9 +120,9 @@ jobs:
         - name: SSH into GALILEO
           run: |
             sshpass -p ${{ secrets.GALILEO_TOKEN }} ssh -o StrictHostKeyChecking=no -t a08trb59@login.g100.cineca.it '
-                rm -r workflowA
-                mkdir workflowA
-                cd workflowA
+                rm -r workflow-A
+                mkdir workflow-A
+                cd workflow-A
                 rm -r output
                 singularity pull library://lucaguffanti/se/matrix:latest
                 mv matrix_latest.sif matrix.sif
