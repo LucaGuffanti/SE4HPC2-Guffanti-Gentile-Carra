@@ -45,6 +45,9 @@ jobs:
             name: project-test-artifact
             path: test_multiplication
 
+        - name: Display structure of downloaded files
+          run: ls -R
+        
         - name: Run all tests
           run: | 
             chmod +x test_multiplication
@@ -93,6 +96,9 @@ jobs:
           with:
             name: container-image-artifact
             path: matrix.sif
+        
+        - name: Display structure of downloaded files
+          run: ls -R
 
         - name: Run all tests
           run: |
