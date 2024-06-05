@@ -44,7 +44,7 @@ Both approaches are valid and since the application is small and has few depende
 To run the container, use the following command:
 
 ```bash
-singularity run mm.sif
+singularity run -C mm.sif
 ```
 
 To execute the tests, run the following command:
