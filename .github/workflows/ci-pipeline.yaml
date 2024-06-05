@@ -13,7 +13,7 @@ jobs:
             sudo apt install -y mpich
 
         - name: Checkout repository
-          uses: actions/checkout@v2
+          uses: actions/checkout@v4
           with:
             submodules: true 
             
@@ -43,7 +43,6 @@ jobs:
           uses: actions/download-artifact@v4
           with:
             name: project-test-artifact
-            path: test_multiplication
 
         - name: Display structure of downloaded files
           run: ls -R
@@ -59,7 +58,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - name: Checkout repository
-            uses: actions/checkout@v2
+            uses: actions/checkout@v4
             with:
               submodules: true 
 
@@ -95,7 +94,6 @@ jobs:
           uses: actions/download-artifact@v4
           with:
             name: container-image-artifact
-            path: matrix.sif
         
         - name: Display structure of downloaded files
           run: ls -R
@@ -113,8 +111,7 @@ jobs:
         - name: Download Container artifact
           uses: actions/download-artifact@v2
           with:
-            name: container-image
-            path: matrix.sif
+            name: container-image-artifact
             
         - name: Login to Singularity Remote
           run: |
