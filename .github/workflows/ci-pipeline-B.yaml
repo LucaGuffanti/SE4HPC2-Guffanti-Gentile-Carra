@@ -67,7 +67,7 @@ jobs:
           - name: Build Container Image
             working-directory: container
             run: | 
-              sudo singularity build --notest matrix.sif matrix_multiplication_lightweight.def
+              sudo singularity build --notest matrix.sif matrix_multiplication.def
             
           - name : Upload Container artifact
             uses: actions/upload-artifact@v4
