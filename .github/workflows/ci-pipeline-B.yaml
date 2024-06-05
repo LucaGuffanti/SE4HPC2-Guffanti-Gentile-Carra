@@ -127,11 +127,12 @@ jobs:
       runs-on: ubuntu-latest
       needs: [upload-artifact]
       steps:
+        - name: Change directory
+
         - name: Schedule job.sh for deployment of the application
-          run: cd worflow-B
           uses: appleboy/ssh-action@v1.0.3
           with:
             host: login.g100.cineca.it
             username: a08trb59
             password: ${{ secrets.GALILEO_TOKEN }}
-            script: sbatch job.sh
+            script: cd workflow-B && sbatch job.sh
