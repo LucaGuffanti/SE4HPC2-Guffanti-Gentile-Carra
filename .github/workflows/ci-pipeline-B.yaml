@@ -120,7 +120,7 @@ jobs:
             username: a08trb59
             password: ${{ secrets.GALILEO_TOKEN }}
             source: "matrix.sif,job.sh"
-            target: "~/worflow-B/"
+            target: "~/workflow-B/"
               
     deploy-on-galileo:
       name: Deploy on Galileo
