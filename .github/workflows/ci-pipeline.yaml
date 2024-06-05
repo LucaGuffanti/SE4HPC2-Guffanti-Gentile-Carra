@@ -113,7 +113,7 @@ jobs:
           with:
             name: container-image-artifact
     
-        - name: Copy to Remote Server
+        - name: Copy job.sh and container image to Remote Server
           uses: appleboy/scp-action@v0.1.7
           with:
             host: login.g100.cineca.it
@@ -127,12 +127,10 @@ jobs:
       runs-on: ubuntu-latest
       needs: [upload-artifact]
       steps:
-            
-        - name: SSH into GALILEO
-          run: |
-            sshpass -p ${{ secrets.GALILEO_TOKEN }} ssh -o StrictHostKeyChecking=no -t a08trb59@login.g100.cineca.it '
-                singularity pull library://lucaguffanti/se/matrix:latest
-                singularity run matrix_latest.sif
-                rm matrix_latest.sif
-                exit
-            '
+        - name: Schedule job.sh for deployment of the application
+          uses: appleboy/ssh-action@v1.0.3
+          with:
+            host: login.g100.cineca.it
+            username: a08trb59
+            password: ${{ secrets.GALILEO_TOKEN }}
+            script: sbatch job.sh
