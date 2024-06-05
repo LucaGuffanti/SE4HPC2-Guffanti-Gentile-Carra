@@ -23,8 +23,8 @@ jobs:
         - name : Upload Project artifact
           uses: actions/upload-artifact@v2
           with:
-            name: project-build-directory
-            path: build
+            name: project-test-artifact
+            path: build/test_multiplication
             if-no-files-found: error
             retention-days: 1
     
@@ -42,11 +42,10 @@ jobs:
         - name : Download Project artifact
           uses: actions/download-artifact@v2
           with:
-            name: project-build-directory
-            path: build
+            name: project-test-artifact
+            path: test_multiplication
 
         - name: Run all tests
-          working-directory: build
           run: | 
             chmod +x test_multiplication
             ./test_multiplication 
@@ -69,21 +68,18 @@ jobs:
             working-directory: container
             run: | 
               sudo singularity build --notest matrix.sif matrix_multiplication.def
-         
 
-          - name: Run all tests
+          - name: TEST
             working-directory: container
-            run: |
-              sudo singularity test matrix.sif
+            run: ls -la
             
           - name : Upload Container artifact
             uses: actions/upload-artifact@v2
             with:
-              name: container-image
+              name: container-image-artifact
               path: container/matrix.sif
               if-no-files-found: error
               retention-days: 1
-              compression-level: 0
     
     test-container:
       name: Test Container
@@ -98,7 +94,7 @@ jobs:
         - name: Download Container artifact
           uses: actions/download-artifact@v2
           with:
-            name: container-image
+            name: container-image-artifact
             path: matrix.sif
 
         - name: Run all tests
