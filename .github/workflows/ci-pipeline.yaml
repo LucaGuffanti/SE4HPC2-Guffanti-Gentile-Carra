@@ -24,7 +24,7 @@ jobs:
           uses: actions/upload-artifact@v2
           with:
             name: project-test-artifact
-            path: build/test_multiplication
+            path: ${{ github.workspace }}/build/test_multiplication
             if-no-files-found: error
             retention-days: 1
     
@@ -69,16 +69,12 @@ jobs:
             working-directory: container
             run: | 
               sudo singularity build --notest matrix.sif matrix_multiplication.def
-
-          - name: TEST
-            working-directory: container
-            run: ls -la
             
           - name : Upload Container artifact
             uses: actions/upload-artifact@v2
             with:
               name: container-image-artifact
-              path: container/matrix.sif
+              path: ${{ github.workspace }}/container/matrix.sif
               if-no-files-found: error
               retention-days: 1
     
