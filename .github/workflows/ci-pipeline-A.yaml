@@ -120,9 +120,11 @@ jobs:
         - name: SSH into GALILEO
           run: |
             sshpass -p ${{ secrets.GALILEO_TOKEN }} ssh -o StrictHostKeyChecking=no -t a08trb59@login.g100.cineca.it '
+                rm -r output
                 singularity pull library://lucaguffanti/se/matrix:latest
                 mv matrix_latest.sif matrix.sif
                 wget https://raw.githubusercontent.com/LucaGuffanti/SE4HPC2-Guffanti-Gentile-Carra/main/job.sh 
                 sbatch job.sh
+                cat output/*.txt
                 exit
             '
