@@ -24,7 +24,7 @@ The second workflow, [ci-pipeline-B.yml](/.github/workflows/ci-pipeline-B.yaml),
 
 ![alt text](img/workflowB.png)
 
-# SINGULARITY CONTAINER
+## SINGULARITY CONTAINER
 The [/container](/container) contains two Singularity container definitions used to run the application. The first definition `matrix_multiplication.def` is built using the `ubuntu:22.04` base image, while the second definition `matrix_multiplication_lightweight.def` is built using the `debian:slim` base image. The two containers are built using the same commands, but the second one is lighter and faster to build.
 
 To build the container, run the following command:
